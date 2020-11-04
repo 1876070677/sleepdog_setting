@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="main_petinfo_margin">20dp</dimen>
+    <dimen name="main_petinfo_fontSize">20dp</dimen>
+    <dimen name="main_button_fontSize">30dp</dimen>
+    <dimen name="main_button_Temperature">40dp</dimen>
+    <dimen name="main_button_Heart_rate">40dp</dimen>
+    <dimen name="health_time_textsize">30dp</dimen>
+    <dimen name="health_textsize">20dp</dimen>
+</resources>
