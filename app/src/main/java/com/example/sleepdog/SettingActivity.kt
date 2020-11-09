@@ -3,6 +3,7 @@ package com.example.sleepdog
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ class SettingActivity : AppCompatActivity() {
     var kind : String = ""
     var gender : String = ""
     var weight : Int = 0
+    var realPath : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,7 +154,12 @@ class SettingActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == RESQUE_CODE) {
             var currentUri: Uri? = data?.data
             profile.setImageURI(currentUri)
+            //null 체크
+            currentUri?.let {
+                it
+            }?: return
 
+            realPath = getRealPathFromURI(currentUri)
             //이미지를 최종 로드하면 플러스모양 추가버튼을 안보이게 설정
             btn_add.visibility = View.INVISIBLE
         }
@@ -163,6 +170,7 @@ class SettingActivity : AppCompatActivity() {
         val pref = getSharedPreferences("info", Context.MODE_PRIVATE)
         val edit = pref.edit() //수정모드
         //1번째 인자가 key값, 두번째가 저장되는 값
+        edit.putString("realPath", realPath)
         edit.putString("userName", username)
         edit.putString("dogName", dogname)
         edit.putString("dogHappy", happy)
@@ -178,6 +186,22 @@ class SettingActivity : AppCompatActivity() {
         키값이 없을 경우 2번째 인자에 있는 "" 으로 대신한다는 의미
         String temp = pref.getString( key, "")
          */
+    }
+
+    //uri를 이용해서 절대경로 구하기
+    fun getRealPathFromURI(contentUri : Uri) : String {
+        var proj : Array<String> = arrayOf(MediaStore.Images.Media.DATA)
+        var c : Cursor? = contentResolver.query(contentUri, proj, null, null, null)
+
+        c?.let {
+            it
+        }?: return ""
+        var index = c.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        c?.moveToFirst()
+
+        var result = c.getString(index)
+
+        return result
     }
 
     //뒤로가기 버튼 눌렀을 때 이루어지는 효과
